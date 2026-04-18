@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Here — Matcha Popup</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --matcha: #4a7c59;
+    --matcha-light: #6a9e78;
+    --matcha-pale: #d4e8d8;
+    --cream: #faf6ef;
+    --text: #1a2e1e;
+    --muted: #7a9080;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(74,124,89,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 90% 100%, rgba(106,158,120,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .container { width: 100%; max-width: 520px; position: relative; z-index: 1; }
+  .header { text-align: center; margin-bottom: 2.5rem; }
+  .logo-mark {
+    width: 64px; height: 64px; background: var(--matcha);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.2rem; font-size: 1.8rem;
+    box-shadow: 0 8px 32px rgba(74,124,89,0.25);
+  }
+  h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 2.6rem; font-weight: 800; color: var(--text);
+    letter-spacing: -0.02em; line-height: 1.1;
+  }
+  .subtitle { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; font-weight: 300; }
+  .card {
+    background: white; border-radius: 20px; padding: 2.2rem;
+    box-shadow: 0 2px 8px rgba(74,124,89,0.06), 0 16px 48px rgba(74,124,89,0.10);
+    border: 1px solid rgba(74,124,89,0.10);
+  }
+  .config-banner {
+    background: #fff8e1; border: 1.5px solid #f0c040;
+    border-radius: 10px; padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem; font-size: 0.85rem; color: #7a5c00; line-height: 1.6;
+  }
+  .config-banner strong { display: block; margin-bottom: 0.2rem; font-size: 0.9rem; }
+  .field { margin-bottom: 1.4rem; }
+  label {
+    display: block; font-size: 0.78rem; font-weight: 500;
+    color: var(--matcha); text-transform: uppercase;
+    letter-spacing: 0.10em; margin-bottom: 0.5rem;
+  }
+  input, textarea {
+    width: 100%; padding: 0.85rem 1rem;
+    border: 1.5px solid var(--matcha-pale); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem;
+    color: var(--text); background: var(--cream); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--matcha); background: white;
+    box-shadow: 0 0 0 3px rgba(74,124,89,0.10);
+  }
+  textarea { resize: none; height: 90px; line-height: 1.5; }
+  .phone-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
+  .submit-btn {
+    width: 100%; padding: 1rem; background: var(--matcha);
+    color: white; border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 1.05rem; font-weight: 500;
+    cursor: pointer; margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(74,124,89,0.25);
+  }
+  .submit-btn:hover { background: var(--matcha-light); }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: var(--muted); box-shadow: none; cursor: not-allowed; }
+  .success-screen { display: none; text-align: center; padding: 1rem 0; }
+  .success-icon {
+    width: 80px; height: 80px; background: var(--matcha-pale);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem; font-size: 2.2rem;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .success-title { font-family: 'Shippori Mincho', serif; font-size: 2rem; color: var(--text); margin-bottom: 0.6rem; }
+  .success-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+  .order-number {
+    display: inline-block; background: var(--matcha-pale);
+    color: var(--matcha); font-weight: 600; font-size: 1.1rem;
+    padding: 0.4rem 1.2rem; border-radius: 100px; margin: 1rem 0;
+  }
+  .new-order-btn {
+    background: none; border: 1.5px solid var(--matcha-pale);
+    color: var(--matcha); padding: 0.7rem 1.5rem; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    cursor: pointer; margin-top: 1.2rem; transition: all 0.2s;
+  }
+  .new-order-btn:hover { background: var(--matcha-pale); }
+  .error-msg { color: #c0392b; font-size: 0.8rem; margin-top: 0.3rem; display: none; }
+  .footer-link { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted); }
+  .footer-link a { color: var(--matcha); text-decoration: none; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo-mark">🍵</div>
+    <h1>Place Your Order</h1>
+    <p class="subtitle">We'll call your name when it's ready</p>
+  </div>
+  <div class="card">
+    <div class="config-banner" id="configBanner">
+      <strong>⚠️ Firebase setup required</strong>
+      Open this file in a text editor, find the firebaseConfig section near the bottom, and paste in your Firebase project values. See SETUP-INSTRUCTIONS.txt for the full walkthrough.
+    </div>
+    <div id="orderForm">
+      <div class="field">
+        <label>Your Name *</label>
+        <input type="text" id="nameInput" placeholder="e.g. Sarah" autocomplete="off" />
+        <div class="error-msg" id="nameError">Please enter your name.</div>
+      </div>
+      <div class="field">
+        <label>Your Order *</label>
+        <textarea id="orderInput" placeholder="e.g. Iced matcha latte, oat milk, less sweet"></textarea>
+        <div class="error-msg" id="orderError">Please tell us what you'd like.</div>
+      </div>
+      <div class="field">
+        <label>Phone Number <span style="font-weight:300;text-transform:none;font-size:0.85em;">(optional)</span></label>
+        <input type="tel" id="phoneInput" placeholder="e.g. 617-555-0100" autocomplete="off" />
+        <div class="phone-note">We'll text you when your order is ready.</div>
+      </div>
+      <button class="submit-btn" id="submitBtn" onclick="submitOrder()">Place Order →</button>
+    </div>
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✓</div>
+      <div class="success-title">You're in the queue!</div>
+      <div class="order-number" id="orderNumDisplay"></div>
+      <div class="success-sub">
+        We'll call your name when your order is ready.<br>
+        <span id="smsNote"></span>
+      </div>
+      <button class="new-order-btn" onclick="resetForm()">Place another order</button>
+    </div>
+  </div>
+  <div class="footer-link">Staff? <a href="matcha-staff.html">Open staff view →</a></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // ================================================================
+  // STEP 1: PASTE YOUR FIREBASE CONFIG VALUES BELOW
+  // Replace everything in quotes that says PASTE_..._HERE
+  // ================================================================
+  const firebaseConfig = {
+    apiKey:            "AIzaSyA7T3puAQVWESlCbu5bZRGyc6MLyowgj5M",
+    authDomain:        "matcha-popup.firebaseapp.com",
+    databaseURL:       "https://matcha-popup-default-rtdb.firebaseio.com",
+    projectId:         "matcha-popup",
+    storageBucket:     "matcha-popup.firebasestorage.app",
+    messagingSenderId: "19045177210",
+    appId:             "1:19045177210:web:09fb793fa9e5e5ec6f28c3"
+  };
+  // ================================================================
+
+  const configured = !firebaseConfig.apiKey.includes("PASTE");
+  if (configured) document.getElementById('configBanner').style.display = 'none';
+
+  let db, ordersRef;
+  if (configured) {
+    const app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    ordersRef = ref(db, 'orders');
+  }
+
+  window.submitOrder = async function() {
+    const name  = document.getElementById('nameInput').value.trim();
+    const order = document.getElementById('orderInput').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
+
+    document.getElementById('nameError').style.display = 'none';
+    document.getElementById('orderError').style.display = 'none';
+
+    let valid = true;
+    if (!name)  { document.getElementById('nameError').style.display  = 'block'; valid = false; }
+    if (!order) { document.getElementById('orderError').style.display = 'block'; valid = false; }
+    if (!valid) return;
+
+    if (!configured) { alert('Firebase is not set up yet. See the setup instructions.'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Placing order…';
+
+    try {
+      const snapshot = await get(ordersRef);
+      const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+
+      const newOrder = {
+        orderNumber: count + 1,
+        name, order,
+        phone: phone || '',
+        status: 'pending',
+        time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        createdAt: Date.now()
+      };
+
+      await push(ordersRef, newOrder);
+
+      document.getElementById('orderForm').style.display = 'none';
+      document.getElementById('orderNumDisplay').textContent = `Order #${newOrder.orderNumber} — ${name}`;
+      document.getElementById('smsNote').textContent = phone ? `We'll send you a text at ${phone}.` : '';
+      document.getElementById('successScreen').style.display = 'block';
+    } catch(e) {
+      alert('Something went wrong submitting your order. Please try again.');
+      console.error(e);
+    }
+
+    btn.disabled = false; btn.textContent = 'Place Order →';
+  };
+
+  window.resetForm = function() {
+    document.getElementById('nameInput').value = '';
+    document.getElementById('orderInput').value = '';
+    document.getElementById('phoneInput').value = '';
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('orderForm').style.display = 'block';
+  };
+</script>
+</body>
+</html>
